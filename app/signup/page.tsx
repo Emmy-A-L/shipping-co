@@ -49,7 +49,7 @@ export default function SignupForm() {
                 <Label htmlFor="password">Password</Label>
                 <Input id="password" type="password" />
               </div>
-              <Button type="submit" className="w-full" asChild>
+              <Button type="submit" className="w-full bg-[1e90ff]" asChild>
                 <Link href="/dashboard">Create an account</Link>
               </Button>
               <Button variant="outline" className="w-full">

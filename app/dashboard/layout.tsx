@@ -10,7 +10,7 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
-      <Header />
+      
       <div className="container flex flex-1 gap-8 py-8">
         <aside className="hidden w-64 shrink-0 flex-col gap-2 md:flex">
           <div className="mb-4 px-4 py-2 font-semibold text-slate-900">Account</div>
@@ -43,7 +43,6 @@ export default function DashboardLayout({
           {children}
         </main>
       </div>
-      <Footer />
     </div>
   );
 }

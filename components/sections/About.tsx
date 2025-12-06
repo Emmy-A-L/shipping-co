@@ -3,7 +3,7 @@ import { CheckCircle2 } from "lucide-react";
 export default function About() {
   return (
     <section id="about" className="py-20">
-      <div className="container max-w-7xl">
+      <div className="container max-w-7xl px-3">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div className="relative aspect-square overflow-hidden rounded-2xl lg:aspect-auto lg:h-[600px]">
              {/* Placeholder for a real image */}

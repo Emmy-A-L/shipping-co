@@ -3,8 +3,8 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="border-t bg-background">
-      <div className="container max-w-7xl py-12 md:py-16 lg:py-20">
+    <footer className="border-t bg-accent">
+      <div className="container w-full px-3 py-12 md:py-16 lg:py-20">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2">
@@ -52,7 +52,7 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground">
+        <div className="flex justify-center items-center mt-12 border-t pt-8 text-sm text-muted-foreground">
           © {new Date().getFullYear()} DreamTrust Shipping Company. All rights reserved.
         </div>
       </div>
