@@ -4,14 +4,15 @@ import { useState, useEffect } from 'react';
 import { Ship, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '../ui/button';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Dialog } from "@headlessui/react";
+
 
 export default function Header() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [menuIsOpen, setMenuIsOpen] = useState(false);
 
   // Lock body scroll when menu is open
   useEffect(() => {
-    if (isOpen) {
+    if (menuIsOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -19,7 +20,7 @@ export default function Header() {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen]);
+  }, [menuIsOpen]);
 
   const menuVariants = {
     closed: {
@@ -62,75 +63,132 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 px-3 max-w-7xl items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 z-50 relative">
-          <Ship className="h-6 w-6 text-primary" />
-          <span className="font-headline text-lg font-bold text-primary">
-            DreamTrust Shipping
-          </span>
-        </Link>
+    <header className="bg-white shadow-sm sticky top-0 z-50">
+      <nav
+        className="mx-auto flex max-w-7xl items-center justify-between p-3 md:p-6 lg:px-8"
+        aria-label="Global"
+      >
+        <div className="flex lg:flex-1">
+          <Link href="/" className="flex items-center gap-1 -m-1.5 p-1.5">
+            <span>
+              <img src="dreamtrust_logo.svg" alt="DreamTrust Logo Image" className='w-8 h-8' />
+            </span>
+            <span className="font-bold text-xl te0000cd]">DreamTrust Shipping</span>
+          </Link>
+        </div>
 
-        {/* Desktop Navbar */}
-        <nav className="hidden items-center gap-1 text-sm font-medium md:flex md:gap-4">
-          {navLinks.map(link => (
-             <Link key={link.href} href={link.href} className="px-3 py-2 transition-colors hover:text-primary">{link.label}</Link>
-          ))}
-          <div className="ml-4 flex items-center gap-2">
-            <Button variant="ghost" asChild className='text-black hover:text-white hover:bg-[#212121]'>
-              <Link href="/login">Sign In</Link>
-            </Button>
-            <Button asChild className='bg-[#212121] text-white hover:bg-black'>
-              <Link href="/signup">Sign Up</Link>
-            </Button>
-          </div>
-        </nav>
+        {/* mobile nav */}
+        <div className="flex lg:hidden">
+          <button
+            type="button"
+            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+            onClick={() => setMenuIsOpen(true)}
+          >
+            <span className="sr-only">Open main menu</span>
+            <Menu className="h-8 w-8 hover:text-[#0000cd] transition-colors" aria-hidden="true" />
+          </button>
+        </div>
 
-        {/* Mobile Menu Toggle */}
-        <button
-          className="md:hidden z-50 relative p-2 text-primary focus:outline-none"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle menu"
-        >
-          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="hidden lg:flex lg:gap-x-12">
+          <Link
+            href="/#services"
+            className="font-semibold leading-6 text-gray-900 hover:text-[#0000cd] transition-colors"
+          >
+            Services
+          </Link>
+          <Link
+            href="/#tracking"
+            className="font-semibold leading-6 text-gray-900 hover:text-[#0000cd] transition-colors"
+          >
+            Track
+          </Link>
+          <Link
+            href="/#about"
+            className="font-semibold leading-6 text-gray-900 hover:text-[#0000cd] transition-colors"
+          >
+            About
+          </Link>
+        </div>
 
-        {/* Mobile Menu Overlay */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial="closed"
-              animate="open"
-              exit="closed"
-              variants={menuVariants}
-              className="fixed inset-0 bg-[#000080] z-40 flex flex-col items-center justify-center bg-background/98 backdrop-blur-xl md:hidden"
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4">
+          <Link
+            href="/auth/login"
+            className="text-sm font-semibold cursor-pointer leading-6 text-[#1e90ff] hover:text-[#0000cd] border border-[#0000cd] rounded-lg transition-colors px-4 py-2"
+          >
+            Log in
+          </Link>
+          <Link
+            href="/auth/signup"
+            className="rounded-lg bg-[#0000cd] px-4 py-2 cursor-pointer text-sm font-semibold text-white shadow-sm hover:bg-[#1e90ff] transition-colors"
+          >
+            Sign up
+          </Link>
+        </div>
+      </nav>
+
+      <Dialog
+        as="div"
+        className="lg:hidden"
+        open={menuIsOpen}
+        onClose={setMenuIsOpen}
+      >
+        <div className="fixed inset-0 z-50" />
+        <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="-m-1.5 p-1.5">
+              <span className="font-bold text-2xl text-[#0000cd]">
+                DreamTrust Shipping
+              </span>
+            </Link>
+            <button
+              type="button"
+              className="-m-2.5 rounded-md p-2.5 text-gray-700"
+              onClick={() => setMenuIsOpen(false)}
             >
-              <nav className="flex flex-col items-center gap-8 text-lg font-medium">
-                {navLinks.map((link, i) => (
-                  <motion.div key={link.href} custom={i} variants={linkVariants}>
-                    <Link
-                      href={link.href}
-                      className="text-2xl font-bold text-foreground/80 hover:text-primary transition-colors"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {link.label}
-                    </Link>
-                  </motion.div>
-                ))}
-                
-                <motion.div custom={navLinks.length} variants={linkVariants} className="flex flex-col gap-4 mt-4 w-full min-w-[200px] px-6">
-                   <Button variant="outline" asChild className='w-full text-lg h-12 border-primary/20 hover:bg-primary/5'>
-                    <Link href="/login" onClick={() => setIsOpen(false)}>Sign In</Link>
-                  </Button>
-                  <Button asChild className='w-full text-lg h-12 bg-[#212121] text-white hover:bg-black shadow-lg shadow-primary/20'>
-                    <Link href="/signup" onClick={() => setIsOpen(false)}>Sign Up</Link>
-                  </Button>
-                </motion.div>
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+              <span className="sr-only">Close menu</span>
+              <X className="h-6 w-6" aria-hidden="true" />
+            </button>
+          </div>
+          <div className="mt-6 flow-root">
+            <div className="-my-6 divide-y divide-gray-500/10">
+              <div className="space-y-2 py-6">
+                <Link
+                  href="/#services"
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                >
+                  Services
+                </Link>
+                <Link
+                  href="/#tracking"
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                >
+                  Track
+                </Link>
+                <Link
+                  href="/#about"
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                >
+                  About Us
+                </Link>
+              </div>
+              <div className="py-6">
+                <Link
+                  href="/auth/login"
+                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="mt-2 -mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white bg-[#0000cd] hover:bg-[#1e90ff]"
+                >
+                  Sign up
+                </Link>
+              </div>
+            </div>
+          </div>
+        </Dialog.Panel>
+      </Dialog>
     </header>
   );
-}
+};

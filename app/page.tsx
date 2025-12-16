@@ -1,3 +1,4 @@
+'use client';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Hero from '@/components/sections/Hero';
@@ -7,6 +8,8 @@ import About from '@/components/sections/About';
 import Tracking from '@/components/sections/Tracking';
 
 export default function Home() {
+
+  console.log("what type of component is this?");
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
