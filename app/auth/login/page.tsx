@@ -42,18 +42,18 @@ export default function LoginForm() {
                     Forgot your password?
                   </Link>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" type="password" placeholder="**********" required />
               </div>
-              <Button type="submit" className="w-full" asChild>
+              <Button type="submit" className="w-full bg-[#0000cd] text-white hover:bg-[#0000cd]/80" asChild>
                 <Link href="/dashboard">Login</Link>
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full bg-gray-200 hover:text-white hover:bg-[#0000cd]">
                 Login with Google
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
-              <Link href="/signup" className="underline">
+              <Link href="/auth/signup" className="text-blue-800">
                 Sign up
               </Link>
             </div>

@@ -49,16 +49,16 @@ export default function SignupForm() {
                 <Label htmlFor="password">Password</Label>
                 <Input id="password" type="password" />
               </div>
-              <Button type="submit" className="w-full bg-[1e90ff]" asChild>
+              <Button type="submit" className="w-full bg-[#0000cd] text-white hover:bg-[#0000cd]/80" asChild>
                 <Link href="/dashboard">Create an account</Link>
               </Button>
-              <Button variant="outline" className="w-full">
-                Sign up with GitHub
+              <Button variant="outline" className="w-full bg-gray-200 hover:text-white hover:bg-[#0000cd]">
+                Sign up with Google
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
               Already have an account?{" "}
-              <Link href="/login" className="underline">
+              <Link href="/login" className="text-blue-800">
                 Sign in
               </Link>
             </div>
