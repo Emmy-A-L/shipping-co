@@ -47,7 +47,7 @@ export default function SignupForm() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" />
+                <Input id="password" type="password" placeholder="**********" />
               </div>
               <Button type="submit" className="w-full bg-[#0000cd] text-white hover:bg-[#0000cd]/80" asChild>
                 <Link href="/dashboard">Create an account</Link>

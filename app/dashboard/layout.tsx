@@ -1,5 +1,5 @@
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+// import Header from "@/components/layout/Header";
+// import Footer from "@/components/layout/Footer";
 import Link from "next/link";
 import { LayoutDashboard, Package, CreditCard, Settings, LogOut } from "lucide-react";
 
@@ -11,11 +11,12 @@ export default function DashboardLayout({
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       
-      <div className="container flex flex-1 gap-8 py-8">
-        <aside className="hidden w-64 shrink-0 flex-col gap-2 md:flex">
+      <div className="container flex flex-1 gap-8">
+        <aside className="hidden bg-[#000080] w-64 shrink-0 flex-col gap-2 px-2 py-3 md:flex">
+          <img src="dreamtrust_logo.svg" alt="DreamTrust Shipping Logo" className="w-14 h-14" />
           <div className="mb-4 px-4 py-2 font-semibold text-slate-900">Account</div>
           <nav className="grid gap-1 text-sm font-medium text-slate-600">
-            <Link href="/dashboard" className="flex items-center gap-3 rounded-lg bg-slate-100 px-4 py-2 text-slate-900 transition-colors hover:text-slate-900">
+              <Link href="/dashboard" className="flex items-center gap-3 rounded-lg bg-slate-100 px-4 py-2 text-slate-900 transition-colors hover:text-slate-900">
               <LayoutDashboard className="h-4 w-4" />
               Overview
             </Link>
