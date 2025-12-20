@@ -1,4 +1,4 @@
-import { User } from "@/lib/auth";
+import { User } from "@/lib/types"
 
 // /services/authService.ts
 export class AuthService {

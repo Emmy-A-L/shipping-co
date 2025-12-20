@@ -72,3 +72,9 @@ export interface User {
   role: 'customer' | 'admin';
   password: string;
 }
+
+export interface SessionPayload {
+  userId: string;
+  email: string;
+  expiresAt: Date;
+}

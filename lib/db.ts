@@ -1,124 +1,138 @@
 // ==================== /lib/db.ts ====================
 
-import { Invoice, Shipment, User } from "./types";
+import { Invoice, Notification, Shipment, User } from "./models";
+import { Invoice as IInvoice, Shipment as IShipment, User as IUser, Notification as INotification } from "./types";
+import mongodb from 'mongodb'
+import clientPromise from './mongoDb'
 
-// In-memory database (replace with real database like PostgreSQL, MongoDB)
+export const ObjectId = () => {
+   return new mongodb.ObjectId()
+}
+
+
 class Database {
-  private shipments: Shipment[] = [
-    {
-      id: 'SH001',
-      trackingNumber: 'TRK123456789',
-      origin: { street: '123 Main St', city: 'New York', state: 'NY', zip: '10001', country: 'USA' },
-      destination: { street: '456 Oak Ave', city: 'Los Angeles', state: 'CA', zip: '90001', country: 'USA' },
-      status: 'in_transit',
-      estimatedDelivery: '2025-12-20',
-      weight: 15.5,
-      dimensions: { length: 20, width: 15, height: 10 },
-      packageType: 'Box',
-      customerId: 'CUST001',
-      cost: 45.99,
-      createdAt: '2025-12-15',
-      updates: [
-        { timestamp: '2025-12-15T10:00:00', location: 'New York, NY', status: 'picked_up', description: 'Package picked up' },
-        { timestamp: '2025-12-16T14:30:00', location: 'Philadelphia, PA', status: 'in_transit', description: 'In transit to sorting facility' },
-        { timestamp: '2025-12-17T09:15:00', location: 'Chicago, IL', status: 'in_transit', description: 'Arrived at distribution center' }
-      ]
-    }
-  ];
-
-  private invoices: Invoice[] = [
-    {
-      id: 'INV001',
-      shipmentId: 'SH001',
-      customerId: 'CUST001',
-      amount: 45.99,
-      status: 'pending',
-      dueDate: '2025-12-27',
-      createdAt: '2025-12-15'
-    }
-  ];
-
-  private notifications: Notification[] = [
-    {
-      id: 'NOT001',
-      userId: 'CUST001',
-      type: 'shipment_update',
-      title: 'Shipment Update',
-      message: 'Your package TRK123456789 has arrived at Chicago distribution center',
-      shipmentId: 'SH001',
-      read: false,
-      timestamp: '2025-12-17T09:15:00'
-    }
-  ];
-
-  private users: User[] = [
-    { id: 'CUST001', email: 'customer@ship.com', name: 'John Doe', role: 'customer', password: 'password' },
-    { id: 'ADMIN001', email: 'admin@ship.com', name: 'Admin User', role: 'admin', password: 'password' }
-  ];
+  constructor() {
+    clientPromise;
+  }
 
   // Shipment methods
-  async getShipmentByTracking(trackingNumber: string): Promise<Shipment | null> {
-    return this.shipments.find(s => s.trackingNumber === trackingNumber) || null;
+  async getShipmentByTracking(trackingNumber: string): Promise<IShipment | null> {
+    await clientPromise;
+    const shipment = await Shipment.findOne({ trackingNumber }).lean();
+    if (!shipment) return null;
+    return { ...shipment, id: shipment._id.toString() } as unknown as IShipment;
   }
 
-  async getShipmentsByCustomer(customerId: string): Promise<Shipment[]> {
-    return this.shipments.filter(s => s.customerId === customerId);
+  async getShipmentsByCustomer(userId: string): Promise<IShipment[]> {
+    await clientPromise;
+    const shipments = await Shipment.find({ userId }).lean();
+    return shipments.map(s => ({ ...s, id: s._id.toString() })) as unknown as IShipment[];
   }
 
-  async getAllShipments(): Promise<Shipment[]> {
-    return this.shipments;
+  async getAllShipments(): Promise<IShipment[]> {
+    await clientPromise;
+    const shipments = await Shipment.find({}).lean();
+    return shipments.map(s => ({ ...s, id: s._id.toString() })) as unknown as IShipment[];
   }
 
-  async createShipment(shipment: Omit<Shipment, 'id' | 'trackingNumber' | 'createdAt' | 'updates'>): Promise<Shipment> {
-    const newShipment: Shipment = {
-      ...shipment,
-      id: `SH${String(this.shipments.length + 1).padStart(3, '0')}`,
-      trackingNumber: `TRK${Date.now()}`,
-      createdAt: new Date().toISOString(),
+  async createShipment(shipmentData: Omit<IShipment, 'id' | 'trackingNumber' | 'createdAt' | 'updates'>): Promise<IShipment> {
+    await clientPromise;
+    const trackingNumber = `SH-${ObjectId().toHexString()}`;
+    
+    // Create new shipment
+    const newShipment = await Shipment.create({
+      ...shipmentData,
+      trackingNumber,
       updates: [{
-        timestamp: new Date().toISOString(),
-        location: `${shipment.origin.city}, ${shipment.origin.state}`,
+        timestamp: new Date(),
+        location: `${shipmentData.origin.city}, ${shipmentData.origin.state}`,
         status: 'pending',
         description: 'Shipment created'
       }]
-    };
-    this.shipments.push(newShipment);
-    return newShipment;
+    });
+
+    return { ...newShipment.toObject(), id: newShipment._id.toString() } as unknown as IShipment;
   }
 
   // Invoice methods
-  async getInvoicesByCustomer(customerId: string): Promise<Invoice[]> {
-    return this.invoices.filter(i => i.customerId === customerId);
+  async getInvoicesByCustomer(customerId: string): Promise<IInvoice[]> {
+    await clientPromise;
+    const invoices = await Invoice.find({ customerId }).lean();
+    return invoices.map(i => ({
+      ...i,
+      id: i._id.toString(),
+      amount: typeof i.amount === 'object' && i.amount !== null && 'value' in i.amount ? parseFloat((i.amount as any).value.toString()) : 0, // Handle Decimal128 or structure if needed, schema says amount: { value: Decimal128, currency: String }
+    })) as unknown as IInvoice[]; 
+    // Correction: Mongoose schema for Invoice has amount: { value: Decimal128, currency: String }. Interface has amount: number.
+    // I need to map it carefully.
   }
 
-  async payInvoice(invoiceId: string): Promise<Invoice | null> {
-    const invoice = this.invoices.find(i => i.id === invoiceId);
-    if (invoice) {
-      invoice.status = 'paid';
-    }
-    return invoice || null;
+  async payInvoice(invoiceId: string): Promise<IInvoice | null> {
+    await clientPromise;
+    const invoice = await Invoice.findOneAndUpdate(
+      { _id: invoiceId },
+      { status: 'paid' },
+      { new: true }
+    ).lean();
+    if (!invoice) return null;
+    return {
+        ...invoice,
+        id: invoice._id.toString(),
+        amount: typeof invoice.amount === 'object' && invoice.amount !== null && 'value' in invoice.amount ? parseFloat((invoice.amount as any).value.toString()) : 0
+    } as unknown as IInvoice;
   }
 
   // Notification methods
-  async getNotificationsByUser(userId: string): Promise<Notification[]> {
-    return this.notifications.filter(n => n.userId === userId);
+  async getNotificationsByUser(userId: string): Promise<INotification[]> {
+    await clientPromise;
+    const notifications = await Notification.find({ userId }).lean();
+    return notifications.map(n => ({
+        ...n,
+        id: n._id.toString()
+    })) as unknown as INotification[];
   }
 
   async markNotificationAsRead(notificationId: string): Promise<void> {
-    const notification = this.notifications.find(n => n.id === notificationId);
-    if (notification) {
-      notification.read = true;
-    }
+    await clientPromise;
+    await Notification.findByIdAndUpdate(notificationId, { read: true });
   }
 
   // User methods
-  async getUserByEmail(email: string): Promise<User | null> {
-    return this.users.find(u => u.email === email) || null;
+  async getUserByEmail(email: string): Promise<IUser | null> {
+    await clientPromise;
+    const user = await User.findOne({ email }).lean();
+    if (!user) return null;
+    
+    return {
+      id: user.userId, // Using userId as the public ID as per previous convention if applicable, or user._id.toString()
+      email: user.email,
+      name: `${user.firstName} ${user.lastName}`.trim(),
+      role: user.role as 'customer' | 'admin',
+      password: user.password
+    };
   }
 
-  async getUserById(id: string): Promise<User | null> {
-    return this.users.find(u => u.id === id) || null;
+  async getUserById(id: string): Promise<IUser | null> {
+    await clientPromise;
+    let user = await User.findOne({ userId: id }).lean();
+    if (!user) {
+        try {
+            user = await User.findById(id).lean();
+        } catch {
+             // ignore invalid objectId error
+        }
+    }
+    
+    if (!user) return null;
+
+    return {
+      id: user.userId, 
+      email: user.email,
+      name: `${user.firstName} ${user.lastName}`.trim(),
+      role: user.role as 'customer' | 'admin',
+      password: user.password
+    };
   }
 }
 
-export const db = new Database();
+export const db: Database = new Database();

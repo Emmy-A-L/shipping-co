@@ -1,24 +1,13 @@
-// lib/auth.ts
-import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
+import { SignJWT, jwtVerify } from 'jose';
+import { SessionPayload } from './types';
 
-const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'your-secret-key-min-32-chars-long');
-const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
+const jwtSecret = process.env.JWT_SECRET;
+const SESSION_DURATION = 1 * 0.5 * 60 * 60 * 1000; // 30 mins
 
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  createdAt: Date;
-}
-
-export interface SessionPayload {
-  userId: string;
-  email: string;
-  expiresAt: Date;
-}
+const secret = new TextEncoder().encode(jwtSecret);
 
 // Hash password
 export async function hashPassword(password: string): Promise<string> {
