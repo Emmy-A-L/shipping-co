@@ -23,9 +23,9 @@ class Database {
     return { ...shipment, id: shipment._id.toString() } as unknown as IShipment;
   }
 
-  async getShipmentsByCustomer(userId: string): Promise<IShipment[]> {
+  async getShipmentsByCustomer(email: string): Promise<IShipment[]> {
     await clientPromise;
-    const shipments = await Shipment.find({ userId }).lean();
+    const shipments = await Shipment.find({ email }).lean();
     return shipments.map(s => ({ ...s, id: s._id.toString() })) as unknown as IShipment[];
   }
 
@@ -55,9 +55,9 @@ class Database {
   }
 
   // Invoice methods
-  async getInvoicesByCustomer(customerId: string): Promise<IInvoice[]> {
+  async getInvoicesByCustomer(email: string): Promise<IInvoice[]> {
     await clientPromise;
-    const invoices = await Invoice.find({ customerId }).lean();
+    const invoices = await Invoice.find({ email }).lean();
     return invoices.map(i => ({
       ...i,
       id: i._id.toString(),
@@ -83,9 +83,9 @@ class Database {
   }
 
   // Notification methods
-  async getNotificationsByUser(userId: string): Promise<INotification[]> {
+  async getNotificationsByUser(email: string): Promise<INotification[]> {
     await clientPromise;
-    const notifications = await Notification.find({ userId }).lean();
+    const notifications = await Notification.find({ email }).lean();
     return notifications.map(n => ({
         ...n,
         id: n._id.toString()
@@ -104,7 +104,7 @@ class Database {
     if (!user) return null;
     
     return {
-      id: user.userId, // Using userId as the public ID as per previous convention if applicable, or user._id.toString()
+      id: user._id.toString(), // Using userId as the public ID as per previous convention if applicable, or user._id.toString()
       email: user.email,
       name: `${user.firstName} ${user.lastName}`.trim(),
       role: user.role as 'customer' | 'admin',
@@ -126,7 +126,7 @@ class Database {
     if (!user) return null;
 
     return {
-      id: user.userId, 
+      id: user._id.toString(), 
       email: user.email,
       name: `${user.firstName} ${user.lastName}`.trim(),
       role: user.role as 'customer' | 'admin',

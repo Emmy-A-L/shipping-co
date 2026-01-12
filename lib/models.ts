@@ -8,7 +8,6 @@ export const User = mongoose.model("User", new mongoose.Schema({
   },
   otherName: {
     type: String,
-    required: false,
   },
   lastName: {
     type: String,
@@ -18,10 +17,6 @@ export const User = mongoose.model("User", new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-  },
-  userId: {
-    type: String,
-    required: true,
   },
   Address: {
     type: String,

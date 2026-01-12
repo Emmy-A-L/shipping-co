@@ -1,11 +1,12 @@
 // app/api/auth/login/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyPassword, createSession, setSessionCookie, isValidEmail } from '@/lib/auth';
+import { User } from '@/lib/models';
 
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
-    const users = [{}]
+    const user = await User.findOne({ email });
 
     // Validate input
     if (!email || !password) {
@@ -22,8 +23,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Find user (replace with database query)
-    const user = users.get(email);
 
     if (!user) {
       return NextResponse.json(
@@ -50,7 +49,8 @@ export async function POST(req: NextRequest) {
       user: {
         id: user.id,
         email: user.email,
-        name: user.name
+        fullName: `${user.firstName} ${user.lastName}`,
+        role: user.role,
       },
       message: 'Login successful'
     });

@@ -5,8 +5,11 @@ import { User } from '@/lib/models';
 import clientPromise from '@/lib/mongoDb';
 
 export async function POST(req: NextRequest) {
+
+  const { email, password, name, userId, Address, phone, role = 'customer' } = await req.json();
+
+  
   try {
-    const { email, password, name, userId, Address, phone, role = 'customer' } = await req.json();
     
     // Validate input
     if (!email || !password || !name || !userId || !Address || !phone) {

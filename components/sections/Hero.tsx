@@ -32,7 +32,7 @@ export default function Hero () {
         </p>
         
         <div className="flex w-full max-w-md flex-col gap-4 sm:flex-row">
-          <Button size="lg" className="w-full text-lg bg-linear-to-r from-[#1e90ff] to-[#0000cd] hover:bg-[#0000cd]" asChild>
+          <Button size="lg" className="w-full text-lg bg-linear-to-r from-[#191970] to-[#0000cd] hover:bg-[#0000cd]" asChild>
             <Link href="/auth/signup">
               Get Started <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
