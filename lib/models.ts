@@ -121,6 +121,7 @@ export const Shipment = mongoose.model("Shipment", new mongoose.Schema({
   packageType: String,
   customerId: { type: String, required: true },
   cost: Number,
+  isPaid: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   updates: [{
     timestamp: { type: Date, default: Date.now },
@@ -128,4 +129,61 @@ export const Shipment = mongoose.model("Shipment", new mongoose.Schema({
     status: String,
     description: String
   }]
+}));
+
+export const Payment = mongoose.model("Payment", new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  shipmentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Shipment",
+  },
+  paystackReference: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  transactionId: {
+    type: String,
+  },
+  amount: {
+    type: Number,
+    required: true,
+  },
+  currency: {
+    type: String,
+    enum: ['NGN'],
+    default: 'NGN',
+    required: true,
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'success', 'failed', 'abandoned'],
+    default: 'pending',
+    required: true,
+  },
+  paymentMethod: {
+    type: String,
+  },
+  gateway: {
+    type: String,
+    default: 'paystack',
+  },
+  metadata: {
+    type: mongoose.Schema.Types.Mixed,
+  },
+  paidAt: {
+    type: Date,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 }));

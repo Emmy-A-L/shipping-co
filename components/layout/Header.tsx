@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Ship, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
-import { Button } from '../ui/button';
 import { Dialog } from "@headlessui/react";
 
 
@@ -71,9 +70,9 @@ export default function Header() {
         <div className="flex lg:flex-1">
           <Link href="/" className="flex items-center gap-1 -m-1.5 p-1.5">
             <span>
-              <img src="dreamtrust_logo.svg" alt="DreamTrust Logo Image" className='w-8 h-8' />
+              <img src="/dreamtrust_logo.svg" alt="DreamTrust Logo Image" className='w-8 h-8' />
             </span>
-            <span className="font-bold text-xl te0000cd]">DreamTrust Shipping</span>
+            <span className="font-bold text-xl text-[#0000cd]">DreamTrust Shipping</span>
           </Link>
         </div>
 
@@ -154,18 +153,21 @@ export default function Header() {
               <div className="space-y-2 py-6">
                 <Link
                   href="/#services"
+                  onClick={() => setMenuIsOpen(false)}
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Services
                 </Link>
                 <Link
                   href="/#tracking"
+                  onClick={() => setMenuIsOpen(false)}
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Track
                 </Link>
                 <Link
                   href="/#about"
+                  onClick={() => setMenuIsOpen(false)}
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   About Us
@@ -174,12 +176,14 @@ export default function Header() {
               <div className="py-6">
                 <Link
                   href="/auth/login"
+                  onClick={() => setMenuIsOpen(false)}
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/auth/signup"
+                  onClick={() => setMenuIsOpen(false)}
                   className="mt-2 -mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white bg-[#0000cd] hover:bg-[#1e90ff]"
                 >
                   Sign up

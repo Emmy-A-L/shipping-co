@@ -20,10 +20,10 @@ export async function verifyPassword(password: string, hashedPassword: string): 
 }
 
 // Create JWT session
-export async function createSession(userId: string, email: string): Promise<string> {
+export async function createSession(phone: string, email: string): Promise<string> {
   const expiresAt = new Date(Date.now() + SESSION_DURATION);
   
-  const token = await new SignJWT({ userId, email })
+  const token = await new SignJWT({ phone, email })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(expiresAt)
@@ -37,7 +37,7 @@ export async function verifySession(token: string): Promise<SessionPayload | nul
   try {
     const { payload } = await jwtVerify(token, secret);
     return {
-      userId: payload.userId as string,
+      phone: payload.phone as string,
       email: payload.email as string,
       expiresAt: new Date((payload.exp as number) * 1000)
     };

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const Loader = () => {
+const MainLoader = () => {
   return (
     <StyledWrapper>
       <div className="loader">
@@ -46,8 +46,8 @@ const Loader = () => {
 
 const StyledWrapper = styled.div`
   .loader {
-    width: fit-content;
-    height: fit-content;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -146,4 +146,4 @@ const StyledWrapper = styled.div`
     }
   }`;
 
-export default Loader;
+export default MainLoader;

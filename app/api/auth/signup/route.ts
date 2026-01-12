@@ -4,15 +4,29 @@ import { hashPassword, createSession, setSessionCookie, isValidEmail, isValidPas
 import { User } from '@/lib/models';
 import clientPromise from '@/lib/mongoDb';
 
+interface SignupRequestBody {
+  email: string;
+  password: string;
+  firstName: string;
+  otherName: string;
+  lastName: string;
+  Address: string;
+  phone: string;
+  role?: string;
+}
+
 export async function POST(req: NextRequest) {
 
-  const { email, password, name, userId, Address, phone, role = 'customer' } = await req.json();
+  const { email, password, firstName, otherName, lastName, Address, phone, role = 'customer' }: SignupRequestBody = await req.json();
 
   
   try {
     
+    // connect to db
+    await clientPromise;
+    
     // Validate input
-    if (!email || !password || !name || !userId || !Address || !phone) {
+    if (!email || !password || !firstName || !otherName || !lastName || !Address || !phone) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -36,9 +50,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // connect to db
-    await clientPromise;
-
     // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -49,33 +60,36 @@ export async function POST(req: NextRequest) {
     }
 
     const hashedPassword = await hashPassword(password);
-
-    // Create session
-    const token = await createSession(userId, email);
-    await setSessionCookie(token);
     
     // create user
     const newUser = await User.create({
-      userId,
       email,
-      // Fix: name needs to be split or User model updated. 
-      // User model has firstName, lastName, otherName. 
-      // The incoming payload has 'name'. I will parse it.
-      firstName: name.split(' ')[0],
-      lastName: name.split(' ').slice(1).join(' ') || ' ', // fallback
+      firstName,
+      otherName,
+      lastName,
       Address,
       phone,
       role,
       password: hashedPassword,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
+
+    // Create session AFTER user is successfully created
+    const token = await createSession(phone, email);
+    await setSessionCookie(token);
 
     return NextResponse.json(
       { 
         user: { 
-          id: newUser.userId, 
-          email: newUser.email, 
-          name: `${newUser.firstName} ${newUser.lastName}`.trim()
+          id: newUser._id.toString(), 
+          email,
+          firstName,
+          otherName,
+          lastName,
+          Address,
+          phone,
+          role,
+          createdAt: new Date(),
         },
         message: 'User created successfully' 
       },
